@@ -6,6 +6,7 @@
  */
 
 int indicator = 13;
+int dialPin = 0;
 int DISPLAY_SIZE = 5;
 int pinDigits[] = {3, 5, 6, 9, 10};
 
@@ -24,21 +25,13 @@ void ledArrayOut(int value){
     int val = 0;
     if(abs(value - pos) <= 255){
       //this should be on, dimmed based upon value's distance from the LED
-      val = value > pos ? pos - value : value - pos;
+      //brighter if we're closer
+      val = 255 - (value >= pos ? value - pos : pos - value);
     }
-
-
     analogWrite(pinDigits[i], val);
   }
-  delay(10);
 }
 
 void loop (){
-  digitalWrite(indicator, HIGH);
-  int maxValue = (DISPLAY_SIZE - 1) * 255;
-  for(int i = 0; i < maxValue; i++)
-    ledArrayOut(i);
-  digitalWrite(indicator, LOW);
-  for(int i = maxValue; i; i--)
-    ledArrayOut(i);
+  ledArrayOut(analogRead(dialPin));  
 }
