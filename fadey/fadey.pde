@@ -19,15 +19,12 @@ void ledArrayOut(int value){
     and light up LEDs based on how close they are to that bracket.
    */
 
-  float slot = value / 255.0;
-
-  //slot should be between 0-5
-
   for(int i = 0; i < DISPLAY_SIZE; i++){
+    int pos = i * 255;
     int val = 0;
-    if(abs(slot - i) <= 1){
-      //this should be on, dimmed based upon distance from i
-      val = map((int) (abs(slot - i) * 100), 0, 100, 255, 0);
+    if(abs(value - pos) <= 255){
+      //this should be on, dimmed based upon value's distance from the LED
+      val = value > pos ? pos - value : value - pos;
     }
 
 
