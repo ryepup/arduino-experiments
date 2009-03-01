@@ -35,7 +35,7 @@ void ledArrayOut(int value){
 
 void loop (){
   digitalWrite(indicator, HIGH);
-  int maxValue = DISPLAY_SIZE * 255;
+  int maxValue = (DISPLAY_SIZE - 1) * 255;
   for(int i = 0; i < maxValue; i++)
     ledArrayOut(i);
   digitalWrite(indicator, LOW);
