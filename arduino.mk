@@ -13,7 +13,7 @@
 #     of your program's file without an extension (e.g. TARGET = foo).
 
 INSTALL_DIR = /home/ryan/arduino/arduino
-PORT = /dev/ttyUSB0
+PORT = /dev/ttyUSB1
 AVR_TOOLS_PATH = /usr/bin
 UPLOAD_RATE = 19200
 AVRDUDE_PROGRAMMER = stk500v1
