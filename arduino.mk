@@ -13,7 +13,7 @@
 #     of your program's file without an extension (e.g. TARGET = foo).
 
 INSTALL_DIR = /home/ryan/arduino/arduino
-PORT = /dev/ttyUSB1
+PORT = /dev/ttyUSB0
 AVR_TOOLS_PATH = /usr/bin
 UPLOAD_RATE = 19200
 AVRDUDE_PROGRAMMER = stk500v1
@@ -28,7 +28,7 @@ SRC =  $(ARDUINO)/pins_arduino.c $(ARDUINO)/wiring.c \
 $(ARDUINO)/wiring_analog.c $(ARDUINO)/wiring_digital.c \
 $(ARDUINO)/wiring_pulse.c $(ARDUINO)/wiring_serial.c \
 $(ARDUINO)/wiring_shift.c $(ARDUINO)/WInterrupts.c
-CXXSRC = $(ARDUINO)/HardwareSerial.cpp $(ARDUINO)/WMath.cpp
+CXXSRC = $(ARDUINO)/HardwareSerial.cpp $(ARDUINO)/WMath.cpp $(ARDUINO)/Print.cpp
 FORMAT = ihex
 
 
