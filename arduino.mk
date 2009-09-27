@@ -11,14 +11,38 @@
 #
 #  2. Below, modify the line containing "TARGET" to refer to the name of
 #     of your program's file without an extension (e.g. TARGET = foo).
+#
+#  3. Modify the line containg "INSTALL_DIR" to point to the directory that
+#     contains the Arduino installation (for example, under Mac OS X, this
+#     might be /Applications/arduino-0011).
+#
+#  4. Modify the line containing "PORT" to refer to the filename
+#     representing the USB or serial connection to your Arduino board
+#     (e.g. PORT = /dev/tty.USB0).  If the exact name of this file
+#     changes, you can use * as a wildcard (e.g. PORT = /dev/tty.USB*).
+#
+#  5. Set the line containing "MCU" to match your board's processor. 
+#     Older one's are atmega8 based, newer ones like Arduino Mini, Bluetooth
+#     or Diecimila have the atmega168.  If you're using a LilyPad Arduino,
+#     change F_CPU to 8000000.
+#
+#  6. At the command line, change to the directory containing your
+#     program's file and the makefile.
+#
+#  7. Type "make" and press enter to compile/verify your program.
+#
+#  8. Type "make upload", reset your Arduino board, and press enter to
+#     upload your program to the Arduino board.
+#
+# $Id$
 
-INSTALL_DIR = /home/ryan/arduino/arduino
+INSTALL_DIR = /home/ryan/arduino
 PORT = /dev/ttyUSB0
-AVR_TOOLS_PATH = /usr/bin
 UPLOAD_RATE = 19200
 AVRDUDE_PROGRAMMER = stk500v1
 MCU = atmega168
 F_CPU = 16000000
+AVR_TOOLS_PATH = /usr/bin
 
 ############################################################################
 # Below here nothing should be changed...
@@ -26,14 +50,14 @@ F_CPU = 16000000
 ARDUINO = $(INSTALL_DIR)/hardware/cores/arduino
 SRC =  $(ARDUINO)/pins_arduino.c $(ARDUINO)/wiring.c \
 $(ARDUINO)/wiring_analog.c $(ARDUINO)/wiring_digital.c \
-$(ARDUINO)/wiring_pulse.c $(ARDUINO)/wiring_serial.c \
+$(ARDUINO)/wiring_pulse.c  \
 $(ARDUINO)/wiring_shift.c $(ARDUINO)/WInterrupts.c
-CXXSRC = $(ARDUINO)/HardwareSerial.cpp $(ARDUINO)/WMath.cpp $(ARDUINO)/Print.cpp
+CXXSRC = $(ARDUINO)/HardwareSerial.cpp $(ARDUINO)/WMath.cpp
 FORMAT = ihex
 
 
 # Name of this Makefile (used for "make depend").
-MAKEFILE = arduino.mk
+MAKEFILE = Makefile
 
 # Debugging format.
 # Native formats for AVR-GCC's -g are stabs [default], or dwarf-2.
