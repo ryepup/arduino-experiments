@@ -1,4 +1,4 @@
-# Arduino 0011 Makefile
+# Arduino Makefile
 # Arduino adaptation by mellis, eighthave, oli.keller
 #
 # This makefile allows you to build sketches from the command line
@@ -7,34 +7,33 @@
 # Detailed instructions for using the makefile:
 #
 #  1. Copy this file into the folder with your sketch. There should be a
-#     file with the extension .pde (e.g. foo.pde)
+#     file with the same name as the folder and with the extension .pde
+#     (e.g. foo.pde in the foo/ folder).
 #
-#  2. Below, modify the line containing "TARGET" to refer to the name of
-#     of your program's file without an extension (e.g. TARGET = foo).
-#
-#  3. Modify the line containg "INSTALL_DIR" to point to the directory that
+#  2. Modify the line containg "INSTALL_DIR" to point to the directory that
 #     contains the Arduino installation (for example, under Mac OS X, this
-#     might be /Applications/arduino-0011).
+#     might be /Applications/arduino-0012).
 #
-#  4. Modify the line containing "PORT" to refer to the filename
+#  3. Modify the line containing "PORT" to refer to the filename
 #     representing the USB or serial connection to your Arduino board
 #     (e.g. PORT = /dev/tty.USB0).  If the exact name of this file
-#     changes, you can use * as a wildcard (e.g. PORT = /dev/tty.USB*).
+#     changes, you can use * as a wildcard (e.g. PORT = /dev/tty.usb*).
 #
-#  5. Set the line containing "MCU" to match your board's processor. 
+#  4. Set the line containing "MCU" to match your board's processor. 
 #     Older one's are atmega8 based, newer ones like Arduino Mini, Bluetooth
 #     or Diecimila have the atmega168.  If you're using a LilyPad Arduino,
 #     change F_CPU to 8000000.
 #
-#  6. At the command line, change to the directory containing your
+#  5. At the command line, change to the directory containing your
 #     program's file and the makefile.
 #
-#  7. Type "make" and press enter to compile/verify your program.
+#  6. Type "make" and press enter to compile/verify your program.
 #
-#  8. Type "make upload", reset your Arduino board, and press enter to
+#  7. Type "make upload", reset your Arduino board, and press enter to
 #     upload your program to the Arduino board.
 #
 # $Id$
+
 
 INSTALL_DIR = /home/ryan/arduino
 PORT = /dev/ttyUSB0
@@ -48,16 +47,17 @@ AVR_TOOLS_PATH = /usr/bin
 # Below here nothing should be changed...
 
 ARDUINO = $(INSTALL_DIR)/hardware/cores/arduino
-SRC =  $(ARDUINO)/pins_arduino.c $(ARDUINO)/wiring.c \
+SRC = $(ARDUINO)/pins_arduino.c $(ARDUINO)/wiring.c \
 $(ARDUINO)/wiring_analog.c $(ARDUINO)/wiring_digital.c \
-$(ARDUINO)/wiring_pulse.c  \
-$(ARDUINO)/wiring_shift.c $(ARDUINO)/WInterrupts.c
-CXXSRC = $(ARDUINO)/HardwareSerial.cpp $(ARDUINO)/WMath.cpp
+$(ARDUINO)/wiring_pulse.c $(ARDUINO)/wiring_shift.c \
+$(ARDUINO)/WInterrupts.c
+CXXSRC = $(ARDUINO)/HardwareSerial.cpp $(ARDUINO)/WMath.cpp \
+$(ARDUINO)/Print.cpp
 FORMAT = ihex
 
 
 # Name of this Makefile (used for "make depend").
-MAKEFILE = Makefile
+MAKEFILE = arduino.mk
 
 # Debugging format.
 # Native formats for AVR-GCC's -g are stabs [default], or dwarf-2.
@@ -223,6 +223,13 @@ applet/core.a: $(OBJ)
 	$(CC) -c $(ALL_ASFLAGS) $< -o $@
 
 
+# Automatic dependencies
+%.d: %.c
+	$(CC) -M $(ALL_CFLAGS) $< | sed "s;$(notdir $*).o:;$*.o $*.d:;" > $@
+
+%.d: %.cpp
+	$(CXX) -M $(ALL_CXXFLAGS) $< | sed "s;$(notdir $*).o:;$*.o $*.d:;" > $@
+
 
 # Target: clean project.
 clean:
@@ -230,15 +237,7 @@ clean:
 	applet/$(TARGET).map applet/$(TARGET).sym applet/$(TARGET).lss applet/core.a \
 	$(OBJ) $(LST) $(SRC:.c=.s) $(SRC:.c=.d) $(CXXSRC:.cpp=.s) $(CXXSRC:.cpp=.d)
 
-depend:
-	if grep '^# DO NOT DELETE' $(MAKEFILE) >/dev/null; \
-	then \
-		sed -e '/^# DO NOT DELETE/,$$d' $(MAKEFILE) > \
-			$(MAKEFILE).$$$$ && \
-		$(MV) $(MAKEFILE).$$$$ $(MAKEFILE); \
-	fi
-	echo '# DO NOT DELETE THIS LINE -- make depend depends on it.' \
-		>> $(MAKEFILE); \
-	$(CC) -M -mmcu=$(MCU) $(CDEFS) $(CINCS) $(SRC) $(ASRC) >> $(MAKEFILE)
+.PHONY:	all build elf hex eep lss sym program coff extcoff clean applet_files sizebefore sizeafter
 
-.PHONY:	all build elf hex eep lss sym program coff extcoff clean depend applet_files sizebefore sizeafter
+-include $(SRC:.c=.d)
+-include $(CXXSRC:.cpp=.d)
