@@ -36,7 +36,7 @@
 
 
 INSTALL_DIR = /home/ryan/arduino
-PORT = /dev/ttyUSB0
+PORT = /dev/ttyUSB1
 UPLOAD_RATE = 19200
 AVRDUDE_PROGRAMMER = stk500v1
 MCU = atmega168
