@@ -9,7 +9,7 @@
 (defvar *default-serial-stream* nil
   "special variable to hold the default stream")
 
-(defvar *device-path* "/dev/ttyUSB1")
+(defvar *device-path* "/dev/ttyUSB0")
 
 (defmacro with-serial-io ((stream) &body body)
   `(serial:with-serial-port (,stream *device-path*
