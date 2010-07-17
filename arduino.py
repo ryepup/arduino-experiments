@@ -7,5 +7,13 @@ def listen():
 def watch():
     global ser
     while 1:
-        print(ser.readline())
+        print ser.readline(),
 
+
+if __name__ == '__main__':
+    global ser
+    listen()
+    try:
+        watch()
+    finally:
+        ser.close()
