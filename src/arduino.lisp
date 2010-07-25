@@ -1,8 +1,4 @@
 ;;;; cl-arduino.lisp
-
-(defpackage #:cl-arduino
-  (:use #:cl #:iterate))
-
 (in-package #:cl-arduino)
 
 
@@ -12,7 +8,7 @@
 (defvar *device-path* "/dev/ttyUSB0")
 
 (defmacro with-serial-io ((stream) &body body)
-  `(serial:with-serial-port (,stream *device-path*
+  `(with-serial-port (,stream *device-path*
 				     :speed 9600
 				     :timeout 1)
      (let ((*default-serial-stream* ,stream))
@@ -44,13 +40,13 @@
 
 (defmethod initialize-instance :after ((obj arduino) &key &allow-other-keys)
   (setf (serial-stream obj)
-	(serial::open-serial-port-stream *device-path*))
+	(open-serial-port-stream *device-path*))
 
-  (serial::set-serial-port-raw-mode (serial-stream obj)
+  (set-serial-port-raw-mode (serial-stream obj)
 				    :speed 9600 :parity :n))
 
 (defmethod disconnect ((ar arduino))
-  (serial::close-serial-port-stream (serial-stream ar)))
+  (close-serial-port-stream (serial-stream ar)))
 
 (defmacro with-serial-ack ((stream-var arduino) &body body)
   `(let ((,stream-var (serial-stream ,arduino)))

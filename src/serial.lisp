@@ -1,12 +1,5 @@
 ;;;; serial.lisp
-(require 'alexandria)
-
-(defpackage #:serial
-  (:use #:cl)
-  (:export with-serial-port
-	    with-serial-ports*))
-
-(in-package #:serial)
+(in-package #:cl-arduino)
 
 (defvar *open-tty-streams* (make-hash-table)
   "Hash table of open ttys for signal handlers")
