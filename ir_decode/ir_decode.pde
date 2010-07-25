@@ -3,9 +3,9 @@
 // 0.2 by farkinga
 // 0.3 by farkinga - adds cool behaviors
 
-#define IR_BIT_LENGTH 32    // number of bits sent by IR remote
+#define IR_BIT_LENGTH 16    // number of bits sent by IR remote
 #define BIT_1 1000          // Binary 1 threshold (Microseconds)
-#define BIT_0 400           // Binary 0 threshold (Microseconds)
+#define BIT_0 200           // Binary 0 threshold (Microseconds)
 #define BIT_START 2000      // Start bit threshold (Microseconds)
 
 #define IR_PIN 7            // Sensor pin 1 wired through a 220 ohm resistor
@@ -52,7 +52,7 @@ void read_pulse(int pulse[], int num_bits)
 {
   for (int i = 0; i < num_bits; i++)
   {
-    pulse[i] = pulseIn(IR_PIN, LOW);
+    pulse[i] = pulseIn(IR_PIN, HIGH);
   }
 }
 
@@ -181,58 +181,6 @@ void do_response(int key)
 {  
   switch (key)
   {
-    case 1437:  // record button
-      Serial.println("toggle debug pulse");
-      runtime_debug = 1 - runtime_debug;
-      break;
-    case 1498:  // display button
-      Serial.println("Toggle key output");
-      output_key = 1 - output_key;
-      break;
-    case 1429:  // power button
-      Serial.println("Power");
-      power_button = 1 - power_button;
-      set_power();
-      break;
-    case 1424:  // channel up button
-      Serial.println("Channel Up");
-      break;      
-    case 1425:  // channel down button
-      Serial.println("Channel Down");
-      break;
-    case 3342:  // up rocker/pause
-      power_level+=1;
-      set_power();
-      break;
-    case 3343:  // down rocker/stop
-      power_level-=1;
-      set_power();
-      break;      
-    case 3344:  // left rocker/rewind
-      if (power_level < 50)
-      {
-        power_level-=3;
-      }
-      else
-      {
-        power_level-=10;
-      }
-      set_power();
-      break;
-    case 3345:  // right rocker/fast forward
-      if (power_level < 50)
-      {
-        power_level+=3;
-      }
-      else
-      {
-        power_level+=10;
-      }
-      set_power();
-      break;
-    case 3352:  // play button
-      blip_power();
-      break;      
     default:
       if (output_key)
       {

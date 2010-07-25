@@ -1,7 +1,7 @@
 ;;;; cl-arduino.lisp
 
 (defpackage #:cl-arduino
-  (:use #:cl))
+  (:use #:cl #:iterate))
 
 (in-package #:cl-arduino)
 
@@ -24,12 +24,13 @@
 
 (defun echoer (byte)
   (with-serial-io (s)
-    (write-byte byte s)    
-))
+    (write-byte byte s)))
 
 (defvar *opcodes* '((:analogRead . 200)
 		    (:digitalWrite . 210)
-		    (:analogWrite . 205)))
+		    (:analogWrite . 205)
+		    (:irRead . 215)
+		    (:shutdown . 220)))
 (defun opcode (operation)
   (let ((code (assoc operation *opcodes*)))
     (assert code (code)
@@ -49,8 +50,7 @@
 				    :speed 9600 :parity :n))
 
 (defmethod disconnect ((ar arduino))
-  (serial::close-serial-port-stream (serial-stream ar))
-  )
+  (serial::close-serial-port-stream (serial-stream ar)))
 
 (defmacro with-serial-ack ((stream-var arduino) &body body)
   `(let ((,stream-var (serial-stream ,arduino)))
@@ -68,7 +68,6 @@
 		   s)
    (read-byte s)))
 
-
 (defmethod (setf analog) (new-value (ar arduino) pin)
   (assert (member pin '(3 5 6 9 10 11))
 	  ()
@@ -79,8 +78,7 @@
     (write-sequence
      (vector (opcode :analogWrite) pin new-value)
      s)))
-  
-  
+    
 (defmethod (setf digital) (new-value (ar arduino) pin-number)  
   (with-serial-ack (s ar)
     (write-sequence
@@ -89,12 +87,27 @@
 	     (if new-value 255 0))
      s)))
 
+(defmethod ir-read ((ar arduino) pin)
+  (with-serial-ack (s ar)
+    (write-sequence
+     (vector (opcode :irRead) pin) s)
+    (parse-integer
+     (iter (for line = (ignore-errors (read-line s)))
+	   (when line
+	     (return line))))))
+
+(defmethod shutdown ((ar arduino))
+  (with-serial-ack (s ar)
+    (write-sequence
+     (vector (opcode :shutdown)) s))
+  (disconnect ar))
+
 (defmethod blink ((ar arduino) pin count &key (interval 0.5))
-  (loop for i from 0 to count
+  (loop for i from 1 to count
 	do
      (progn
-       (setf (digital pin ar) nil)
+       (setf (digital ar pin) nil)
        (sleep interval)
-       (setf (digital pin ar) T)
+       (setf (digital ar pin) T)
        (sleep interval)))
-  (setf (digital pin ar) nil))
+  (setf (digital ar pin) nil))

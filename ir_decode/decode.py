@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import serial
 
 def listen():
@@ -10,7 +11,7 @@ def watch():
     while 1:
         reading = ser.readline().split(":")
         if len(reading) == 1:                    
-            print ser.readline(),
+            print reading[0]
         else:
             bit = reading[0]
             value = int(reading[1])
