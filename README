@@ -3,3 +3,8 @@ This is my arduino playground.
 Weirdness:
  * sometimes you need to change the /dev/ttyUSB# number in arduino.mk
  * when running make upload, hit the reset button on the board at the same time you push enter.
+
+
+## Install
+
+* sudo apt-get install arduino arduino-core
